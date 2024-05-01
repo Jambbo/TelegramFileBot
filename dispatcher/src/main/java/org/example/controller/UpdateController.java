@@ -65,7 +65,7 @@ public class UpdateController {
     //использую прокси-метод, а не вызываю выше напрямую у тгбота sendAnswerMessage
     //потому что в updateController передаваться будут также из сервисов, то из сервисов
     // напрямую мы не сможем обращаться к тгботу, нам нужен прокси-метод setView, который пробрасывает ответ дальше в тгбот
-    private void setView(SendMessage message) {
+    public void setView(SendMessage message) {
         telegramBot.sendAnswerMessage(message);
     }
 
