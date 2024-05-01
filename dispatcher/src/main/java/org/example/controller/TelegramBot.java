@@ -21,7 +21,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Value("${bot.token}")
     private String botToken;
-    private UpdateController updateController;
+    private  UpdateController updateController;
 
     public TelegramBot(UpdateController updateController) {
         this.updateController = updateController;
@@ -45,11 +45,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         Message originalMessage = update.getMessage();
         log.debug(originalMessage.getText());
-
-        SendMessage response = new SendMessage();
-        response.setChatId(originalMessage.getChatId().toString());
-        response.setText("Wazap");
-        sendAnswerMessage(response);
+        updateController.processUpdate(update);
     }
 
     public void sendAnswerMessage(SendMessage message){

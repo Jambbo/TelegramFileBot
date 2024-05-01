@@ -1,5 +1,5 @@
 package org.example;
-
+// названия очередей в брокере сообщений
 public class RabbitQueue {
 
     public static final String DOC_MESSAGE_UPDATE = "doc_message_update";

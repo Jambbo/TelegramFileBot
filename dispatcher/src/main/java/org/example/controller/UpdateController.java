@@ -2,11 +2,14 @@ package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.example.service.UpdateProducer;
 import org.example.utils.MessageUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import static org.example.RabbitQueue.*;
 
 @Component
 @Log4j
@@ -14,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class UpdateController {
 
     private final MessageUtils messageUtils;
+    private final UpdateProducer updateProducer;
     private TelegramBot telegramBot; //связываем этот контроллер с телеграм ботом,
     // тут не получится использовать механизм внедрения зависимостей от спринга т.к. приложение не стартанет из-за наличия круговой зависимости
 
@@ -30,7 +34,7 @@ public class UpdateController {
         if(update.getMessage()!=null){
             distributeMessagesByType(update);
         }else{
-            log.error("Received unsupported message type "+update);
+            log.error("Unsupported message type is received: "+update);
         }
     }
 
@@ -52,21 +56,35 @@ public class UpdateController {
                 update,"Непподерживаемый тип сообщения!");
         setView(sendMessage);
     }
+    private void setFileIsReceivedView(Update update) {
+        SendMessage sendMessage = messageUtils.generateSendMessageWithText(
+                update,"Файл получен! Обрабатывается...");
+        setView(sendMessage);
+    }
 
+    //использую прокси-метод, а не вызываю выше напрямую у тгбота sendAnswerMessage
+    //потому что в updateController передаваться будут также из сервисов, то из сервисов
+    // напрямую мы не сможем обращаться к тгботу, нам нужен прокси-метод setView, который пробрасывает ответ дальше в тгбот
     private void setView(SendMessage message) {
         telegramBot.sendAnswerMessage(message);
     }
 
-    private void processPhotoMessage(Update update) {
 
+
+    //работа методов по передаче каждого отдельного типа данных в нужную очередь ==>
+    private void processPhotoMessage(Update update) {
+            updateProducer.produce(PHOTO_MESSAGE_UPDATE,update);
+            setFileIsReceivedView(update);//возвращаем пользователю промежуточное смс о том что контент получен и ведется его обработка
     }
 
-    private void processDocMessage(Update update) {
 
+    private void processDocMessage(Update update) {
+        updateProducer.produce(DOC_MESSAGE_UPDATE,update);
+        setFileIsReceivedView(update);//возвращаем пользователю промежуточное смс о том что контент получен и ведется его обработка
     }
 
     private void processTextMessage(Update update) {
-
+        updateProducer.produce(TEXT_MESSAGE_UPDATE,update);
     }
 
 }
