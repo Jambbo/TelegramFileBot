@@ -1,1 +1,8 @@
-
+2024-05-01 12:40:59 DEBUG TelegramBot:47 - Hello
+2024-05-01 12:40:59 DEBUG UpdateProducerImpl:20 - Hello
+2024-05-01 18:56:19 DEBUG TelegramBot:47 - Hello from Chat
+2024-05-01 18:56:19 DEBUG UpdateProducerImpl:20 - Hello from Chat
+2024-05-02 14:23:12 DEBUG TelegramBot:47 - Hello from chat2
+2024-05-02 14:23:12 DEBUG UpdateProducerImpl:20 - Hello from chat2
+2024-05-02 14:25:46 DEBUG TelegramBot:47 - Hello 1 more time
+2024-05-02 14:25:46 DEBUG UpdateProducerImpl:20 - Hello 1 more time
