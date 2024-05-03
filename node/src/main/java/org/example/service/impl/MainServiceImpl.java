@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j;
 import org.example.dao.AppUserDAO;
 import org.example.dao.RawDataDAO;
 import org.example.entity.AppDocument;
+import org.example.entity.AppPhoto;
 import org.example.entity.AppUser;
 import org.example.entity.RawData;
 import org.example.exceptions.UploadFileException;
@@ -66,7 +67,7 @@ public class MainServiceImpl implements MainService {
         }
         try {
             AppDocument doc = fileService.processDoc(update.getMessage());
-            //TODO добавить сохранение документа :)
+            //TODO добавить генерацию ссылки для скачивания документа :)
             var answer = "Документ успешно загружен! Ссылка для скачивания: http://test.ru/get-doc/777";
             sendAnswer(answer, chatId);
         } catch(UploadFileException e){
@@ -84,9 +85,16 @@ public class MainServiceImpl implements MainService {
         if(isNotAllowToSendContent(chatId,appUser)){
             return;
         }
-        //TODO добавить сохранение фото :)
-        var answer = "Фото успешно загружено! Ссылка для скачивания: http://test.ru/get-photo/777";
-        sendAnswer(answer,chatId);
+        try {
+            AppPhoto photo = fileService.processPhoto(update.getMessage());
+            //TODO добавить генерацию ссылки для скачивания фото :)
+            var answer = "Фото успешно загружено! Ссылка для скачивания: http://test.ru/get-photo/777";
+            sendAnswer(answer, chatId);
+        }catch (UploadFileException e){
+            log.error(e);
+            String error = "К сожалению, загрузка фото не удалась. Повторите попытку позже.";
+            sendAnswer(error,chatId);
+        }
     }
     private boolean isNotAllowToSendContent(Long chatId, AppUser appUser) {
         var userState = appUser.getState();
