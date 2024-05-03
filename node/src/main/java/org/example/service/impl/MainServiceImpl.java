@@ -48,7 +48,6 @@ public class MainServiceImpl implements MainService {
         }
 
         var chatId = update.getMessage().getChatId();
-
         sendAnswer(output,chatId);
     }
 
@@ -74,7 +73,7 @@ public class MainServiceImpl implements MainService {
             return;
         }
         //TODO добавить сохранение фото :)
-        var answer = "Фото успешно загружен! Ссылка для скачивания: http://test.ru/get-photo/777";
+        var answer = "Фото успешно загружено! Ссылка для скачивания: http://test.ru/get-photo/777";
         sendAnswer(answer,chatId);
     }
     private boolean isNotAllowToSendContent(Long chatId, AppUser appUser) {
@@ -101,7 +100,7 @@ public class MainServiceImpl implements MainService {
     private String processServiceCommand(AppUser appUser, String cmd) {
         if(REGISTRATION.equals(cmd)){
         //TODO добавить регистрацию
-            return "Временно недоступно!";
+            return "Временно недоступно.";
         }else if(HELP.equals(cmd)){
             return help();
         }else if(START.equals(cmd)){

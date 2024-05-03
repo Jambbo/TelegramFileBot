@@ -61,6 +61,11 @@ public class UpdateController {
                 update,"Файл получен! Обрабатывается...");
         setView(sendMessage);
     }
+    private void setPhotoIsReceivedView(Update update){
+        SendMessage sendMessage = messageUtils.generateSendMessageWithText(
+                update,"Фото получено! Обрабатывается...");
+        setView(sendMessage);
+    }
 
     //использую прокси-метод, а не вызываю выше напрямую у тгбота sendAnswerMessage
     //потому что в updateController передаваться будут также из сервисов, то из сервисов
@@ -73,8 +78,8 @@ public class UpdateController {
 
     //работа методов по передаче каждого отдельного типа данных в нужную очередь ==>
     private void processPhotoMessage(Update update) {
-            updateProducer.produce(PHOTO_MESSAGE_UPDATE,update);
-            setFileIsReceivedView(update);//возвращаем пользователю промежуточное смс о том что контент получен и ведется его обработка
+        updateProducer.produce(PHOTO_MESSAGE_UPDATE,update);
+        setPhotoIsReceivedView(update);//возвращаем пользователю промежуточное смс о том что контент получен и ведется его обработка
     }
 
 

@@ -28,3 +28,21 @@
 2024-05-02 20:28:02 DEBUG UpdateProducerImpl:20 - 
 2024-05-02 20:28:08 DEBUG TelegramBot:47 - 
 2024-05-02 20:28:08 DEBUG UpdateProducerImpl:20 - 
+2024-05-03 10:57:14 DEBUG TelegramBot:47 - ку
+2024-05-03 10:57:14 DEBUG UpdateProducerImpl:20 - ку
+2024-05-03 10:57:19 DEBUG TelegramBot:47 - /help
+2024-05-03 10:57:19 DEBUG UpdateProducerImpl:20 - /help
+2024-05-03 10:57:22 DEBUG TelegramBot:47 - /start
+2024-05-03 10:57:22 DEBUG UpdateProducerImpl:20 - /start
+2024-05-03 10:57:33 DEBUG TelegramBot:47 - /start
+2024-05-03 10:57:33 DEBUG UpdateProducerImpl:20 - /start
+2024-05-03 10:57:59 DEBUG TelegramBot:47 - /cancel
+2024-05-03 10:57:59 DEBUG UpdateProducerImpl:20 - /cancel
+2024-05-03 10:58:04 DEBUG TelegramBot:47 - /registration
+2024-05-03 10:58:04 DEBUG UpdateProducerImpl:20 - /registration
+2024-05-03 10:58:19 DEBUG TelegramBot:47 - 
+2024-05-03 10:58:19 DEBUG UpdateProducerImpl:20 - 
+2024-05-03 11:03:16 DEBUG TelegramBot:47 - 
+2024-05-03 11:03:16 DEBUG UpdateProducerImpl:20 - 
+2024-05-03 11:03:24 DEBUG TelegramBot:47 - 
+2024-05-03 11:03:24 DEBUG UpdateProducerImpl:20 - 
