@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.example.dao.AppUserDAO;
 import org.example.dao.RawDataDAO;
+import org.example.entity.AppDocument;
 import org.example.entity.AppUser;
 import org.example.entity.RawData;
+import org.example.exceptions.UploadFileException;
+import org.example.service.FileService;
 import org.example.service.MainService;
 import org.example.service.ProducerService;
 import org.example.service.enums.ServiceCommands;
@@ -27,6 +30,7 @@ public class MainServiceImpl implements MainService {
     private final AppUserDAO appUserDAO;
     private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
+    private final FileService fileService;
 
     @Override
     public void processTextMessage(Update update) {
@@ -36,7 +40,8 @@ public class MainServiceImpl implements MainService {
         var text = update.getMessage().getText();
         var output = "";
 
-        if(CANCEL.equals(text)){
+        var serviceCommand = ServiceCommands.fromValue(text);
+        if(CANCEL.equals(serviceCommand)){
             output = cancelProcess(appUser);
         }else if(BASIC_STATE.equals(userState)){
             output = processServiceCommand(appUser, text);
@@ -59,9 +64,16 @@ public class MainServiceImpl implements MainService {
         if(isNotAllowToSendContent(chatId,appUser)){
             return;
         }
-        //TODO добавить сохранение документа :)
-        var answer = "Документ успешно загружен! Ссылка для скачивания: http://test.ru/get-doc/777";
-        sendAnswer(answer,chatId);
+        try {
+            AppDocument doc = fileService.processDoc(update.getMessage());
+            //TODO добавить сохранение документа :)
+            var answer = "Документ успешно загружен! Ссылка для скачивания: http://test.ru/get-doc/777";
+            sendAnswer(answer, chatId);
+        } catch(UploadFileException e){
+            log.error(e);
+            String error = "К сожалению, загрузка файла не удалась. Повторите попытку позже.";
+            sendAnswer(error,chatId);
+        }
     }
 
     @Override
@@ -98,12 +110,13 @@ public class MainServiceImpl implements MainService {
     }
 
     private String processServiceCommand(AppUser appUser, String cmd) {
-        if(REGISTRATION.equals(cmd)){
+        var serviceCommand = ServiceCommands.fromValue(cmd);
+        if(REGISTRATION.equals(serviceCommand)){
         //TODO добавить регистрацию
             return "Временно недоступно.";
-        }else if(HELP.equals(cmd)){
+        }else if(HELP.equals(serviceCommand)){
             return help();
-        }else if(START.equals(cmd)){
+        }else if(START.equals(serviceCommand)){
             return "Привет! Чтобы посмотреть список доступных команд введите /help";
         }else{
             return "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";

@@ -1,10 +1,13 @@
 package org.example.entity;
 
 import lombok.*;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 
-@Data
+@EqualsAndHashCode(exclude = "id")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -15,7 +18,7 @@ public class AppDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String telegramField;
+    private String telegramFileId;
     private String docName;
     @OneToOne
     private BinaryContent binaryContent;
