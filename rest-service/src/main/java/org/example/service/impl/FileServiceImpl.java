@@ -11,6 +11,7 @@ import org.example.entity.AppDocument;
 import org.example.entity.AppPhoto;
 import org.example.entity.BinaryContent;
 import org.example.service.FileService;
+import org.example.utils.CryptoTool;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
@@ -23,19 +24,24 @@ import java.io.IOException;
 public class FileServiceImpl implements FileService {
     private final AppDocumentDAO appDocumentDAO;
     private final AppPhotoDAO appPhotoDAO;
+    private final CryptoTool cryptoTool;
     @Override
-    public AppDocument getDocument(String id) {
-        //TODO добавить деширование хеш-строки
-        var docId = Long.parseLong(id);
+    public AppDocument getDocument(String hash) {
+        var docId = cryptoTool.idOf(hash);
+        if(docId == null){
+            return null;
+        }
         return appDocumentDAO.findById(docId).orElseThrow(
                 ()->new RuntimeException("Document with id: "+docId+" not found.")
         );
     }
 
     @Override
-    public AppPhoto getPhoto(String id) {
-        //TODO добавить деширование хеш-строки
-        var photoId = Long.parseLong(id);
+    public AppPhoto getPhoto(String hash) {
+        var photoId = cryptoTool.idOf(hash);
+        if(photoId == null){
+            return null;
+        }
         return appPhotoDAO.findById(photoId).orElseThrow(
                 ()->new RuntimeException("Photo with id: "+photoId+" not found.")
         );

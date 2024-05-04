@@ -9,9 +9,11 @@ import org.example.entity.AppPhoto;
 import org.example.entity.AppUser;
 import org.example.entity.RawData;
 import org.example.exceptions.UploadFileException;
+import org.example.service.AppUserService;
 import org.example.service.FileService;
 import org.example.service.MainService;
 import org.example.service.ProducerService;
+import org.example.service.enums.LinkType;
 import org.example.service.enums.ServiceCommands;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -32,6 +34,7 @@ public class MainServiceImpl implements MainService {
     private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
     private final FileService fileService;
+    private final AppUserService appUserService;
 
     @Override
     public void processTextMessage(Update update) {
@@ -47,7 +50,7 @@ public class MainServiceImpl implements MainService {
         }else if(BASIC_STATE.equals(userState)){
             output = processServiceCommand(appUser, text);
         }else if(WAIT_FOR_EMAIL_STATE.equals(userState)){
-            //TODO добавить обработку  емейла
+            output = appUserService.setEmail(appUser,text);
         }else{
             log.error("Unknown user state: "+ userState);
             output = "Неизвестная ошибка! Введите /cancel и попробуйте снова!";
@@ -67,8 +70,8 @@ public class MainServiceImpl implements MainService {
         }
         try {
             AppDocument doc = fileService.processDoc(update.getMessage());
-            //TODO добавить генерацию ссылки для скачивания документа :)
-            var answer = "Документ успешно загружен! Ссылка для скачивания: http://test.ru/get-doc/777";
+            String link = fileService.generateLink(doc.getId(), LinkType.GET_DOC);
+            var answer = "Документ успешно загружен! Ссылка для скачивания: "+link;
             sendAnswer(answer, chatId);
         } catch(UploadFileException e){
             log.error(e);
@@ -87,8 +90,8 @@ public class MainServiceImpl implements MainService {
         }
         try {
             AppPhoto photo = fileService.processPhoto(update.getMessage());
-            //TODO добавить генерацию ссылки для скачивания фото :)
-            var answer = "Фото успешно загружено! Ссылка для скачивания: http://test.ru/get-photo/777";
+           String link = fileService.generateLink(photo.getId(),LinkType.GET_PHOTO);
+            var answer = "Фото успешно загружено! Ссылка для скачивания: "+link;
             sendAnswer(answer, chatId);
         }catch (UploadFileException e){
             log.error(e);
@@ -120,8 +123,7 @@ public class MainServiceImpl implements MainService {
     private String processServiceCommand(AppUser appUser, String cmd) {
         var serviceCommand = ServiceCommands.fromValue(cmd);
         if(REGISTRATION.equals(serviceCommand)){
-        //TODO добавить регистрацию
-            return "Временно недоступно.";
+            return appUserService.registerUser(appUser);
         }else if(HELP.equals(serviceCommand)){
             return help();
         }else if(START.equals(serviceCommand)){
@@ -146,21 +148,20 @@ public class MainServiceImpl implements MainService {
     private AppUser findOrSaveAppUser(Update update){
         User telegramUser = update.getMessage().getFrom();
 
-        AppUser persistentAppUser = appUserDAO.findAppUserByTelegramUserId(telegramUser.getId());
-        if(persistentAppUser==null){
+        var optional = appUserDAO.findByTelegramUserId(telegramUser.getId());
+        if(optional.isEmpty()){
             AppUser transientAppUser = AppUser.builder()
                     .telegramUserId(telegramUser.getId())
                     .firstName(telegramUser.getFirstName())
                     .lastName(telegramUser.getLastName())
                     .username(telegramUser.getUserName())
-                    //TODO изменить значение по умолчанию после добавления регистрации
-                    .isActive(true)
+                    .isActive(false)
                     .state(BASIC_STATE)
                     .build();
             return appUserDAO.save(transientAppUser);
         }
 
-        return persistentAppUser;
+        return optional.get();
     }
 
     private void saveRawData(Update update) {
