@@ -6,7 +6,6 @@ import org.example.service.UpdateProducer;
 import org.example.utils.MessageUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static org.example.RabbitQueue.*;
@@ -14,7 +13,7 @@ import static org.example.RabbitQueue.*;
 @Component
 @Log4j
 @RequiredArgsConstructor
-public class UpdateController {
+public class UpdateProcessor {
 
     private final MessageUtils messageUtils;
     private final UpdateProducer updateProducer;

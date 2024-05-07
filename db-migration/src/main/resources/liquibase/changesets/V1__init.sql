@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS app_user
     is_active BOOLEAN NOT NULL,
     last_name VARCHAR(255),
     state VARCHAR(255),
-    telegram_user_id BIGINT NOT NULL,
+    telegram_user_id BIGINT NOT NULL UNIQUE ,
     username VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );

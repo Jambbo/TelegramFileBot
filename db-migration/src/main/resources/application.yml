@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5439/tgbotik
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:liquibase/db.changelog.yml
+    enabled: true
+    default-schema: public
+
+server:
+  port: 8090
+

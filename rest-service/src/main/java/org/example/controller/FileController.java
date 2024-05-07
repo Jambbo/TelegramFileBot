@@ -68,8 +68,10 @@ public class FileController {
        try{
            var output = response.getOutputStream();
            output.write(binaryContent.getFileAsArrayOfBytes());
+           output.close();
        }catch (IOException e){
            log.error(e);
+           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
        }
     }
 }
